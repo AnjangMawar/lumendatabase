@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_28_213909) do
+ActiveRecord::Schema.define(version: 2021_01_22_160405) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -161,7 +161,7 @@ ActiveRecord::Schema.define(version: 2020_01_28_213909) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "url", limit: 8192
-    t.index ["url_original"], name: "index_copyrighted_urls_on_url_original", unique: true
+    t.index "md5((url_original)::text)", name: "index_copyrighted_urls_on_url_original", unique: true
   end
 
   create_table "copyrighted_urls_works", id: false, force: :cascade do |t|
@@ -175,13 +175,6 @@ ActiveRecord::Schema.define(version: 2020_01_28_213909) do
     t.integer "notice_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "domain_counts", id: :serial, force: :cascade do |t|
-    t.string "domain_name"
-    t.integer "count", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "entities", id: :serial, force: :cascade do |t|
@@ -242,7 +235,6 @@ ActiveRecord::Schema.define(version: 2020_01_28_213909) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "url", limit: 8192
-    t.index ["url_original"], name: "index_infringing_urls_on_url_original", unique: true
   end
 
   create_table "infringing_urls_works", id: false, force: :cascade do |t|
@@ -467,6 +459,20 @@ ActiveRecord::Schema.define(version: 2020_01_28_213909) do
     t.datetime "updated_at"
     t.string "kind"
     t.text "description_original"
+  end
+
+  create_table "youtube_import_errors", force: :cascade do |t|
+    t.integer "original_notice_id"
+    t.text "message"
+    t.string "filename", limit: 1024
+    t.text "stacktrace"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "yt_imports", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
